@@ -12,15 +12,21 @@
         android:text="@string/title" />
 
     <TextView
+        android:id="@+id/author_text_view"
+        android:layout_below="@+id/title_text_view"
+        style="@style/newsAuthorStyle"
+        android:text= "@string/author" />
+
+    <TextView
         android:id="@+id/category_text_view"
         style="@style/newsCategoryStyle"
-        android:layout_below="@+id/title_text_view"
+        android:layout_below="@+id/author_text_view"
         android:text="@string/category_name" />
 
     <TextView
         android:id="@+id/date_text_view"
         style="@style/newsDateStyle"
-        android:layout_below="@id/title_text_view"
+        android:layout_below="@id/author_text_view"
         android:text="@string/date_published" />
 
 </RelativeLayout>

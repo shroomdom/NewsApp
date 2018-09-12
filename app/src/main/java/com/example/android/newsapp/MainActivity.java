@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.widget.TextView;
+import android.net.ConnectivityManager;
+import android.content.Context;
+import android.net.NetworkInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,23 +41,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         errorMessageView = (TextView) findViewById(R.id.error_text_view);
         listView.setEmptyView(errorMessageView);
 
-        // Set the adapter on the ListView
-        // so the list can be populated in the user interface
-        listView.setAdapter(adapter);
+        boolean hasInternet = checkConnectivity();
+        System.out.println("Checking Internet" + hasInternet);
+        if (hasInternet) {
+            // Set the adapter on the ListView
+            // so the list can be populated in the user interface
+            listView.setAdapter(adapter);
 
-        // Set onClickListener to the list on news root page and opens other news articles
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                News currentNews = adapter.getItem(position);
-                Uri newsUri = Uri.parse(currentNews.getURL());
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
-                startActivity(websiteIntent);
-            }
-        });
+            // Set onClickListener to the list on news root page and opens other news articles
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    News currentNews = adapter.getItem(position);
+                    Uri newsUri = Uri.parse(currentNews.getURL());
+                    Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
+                    startActivity(websiteIntent);
+                }
+            });
+        } else {
+            errorMessageView.setText(R.string.error_finding_news);
+        }
 
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(IDENTIFIER, null, this);
+    }
+
+    private boolean checkConnectivity() {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     @Override
@@ -71,17 +87,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.clear();
 
         // System.out.println("start of loader");
-        // Add news to data if incoming news list isn't empty
-        // If incoming news list is empty, return error message
-        if (newsIncomingList != null) {
+        /**Add news to data if incoming news list isn't empty
+         * If incoming news list is empty, return error message
+         */
+        if (newsIncomingList != null && !newsIncomingList.isEmpty()) {
             // System.out.println("check if list is empty");
-            if (newsIncomingList.isEmpty()) {
-                errorMessageView.setText(R.string.error_finding_news);
-                // System.out.println("this list is empty");
-            } else {
-                // System.out.println("list is not empty");
-                adapter.addAll(newsIncomingList);
-            }
+            adapter.addAll(newsIncomingList);
         } else {
             // System.out.println("list is null");
             errorMessageView.setText(R.string.error_finding_news);

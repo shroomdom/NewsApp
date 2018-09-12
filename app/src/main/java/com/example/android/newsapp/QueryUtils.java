@@ -36,7 +36,7 @@ public class QueryUtils {
         String jsonResponse = null;
         try {
             // Try to create an URL from the String
-            url = new URL("https://content.guardianapis.com/search?from-date=2018-08-26&api-key=test");
+            url = new URL("http://content.guardianapis.com/search?q=debates&section=politics&show-tags=contributor&api-key=test");
             try {
                 // System.out.println("make http request");
                 jsonResponse = makeHttpRequest(url);
@@ -138,14 +138,16 @@ public class QueryUtils {
                 // System.out.println("show length of resultsListArray" + resultsListArray.length());
                 for (int i = 0; i < resultsListArray.length(); i++) {
                     JSONObject currentNews = resultsListArray.getJSONObject(i);
+                    JSONArray tagsList = currentNews.getJSONArray("tags");
 
                     String title = currentNews.getString("webTitle");
+                    ArrayList<String> author = getAuthorName(tagsList);
                     String category = currentNews.getString("sectionName");
                     String datePublished = currentNews.getString("webPublicationDate");
                     String url = currentNews.getString("webUrl");
 
                     // System.out.println("show title" + title);
-                    News tempNews = new News(title, category, datePublished, url);
+                    News tempNews = new News(title, author, category, datePublished, url);
                     newsList.add(tempNews);
                 }
             }
@@ -153,7 +155,26 @@ public class QueryUtils {
         } catch (JSONException e) {
             System.out.println("catch jsonException" + e);
         }
-        // Return the list of news
         return newsList;
+    }
+
+    private static ArrayList<String> getAuthorName(JSONArray tagsList) {
+        ArrayList<String> authorName = new ArrayList<>();
+
+        if (tagsList != null) {
+
+            // System.out.println("show length of resultsListArray" + resultsListArray.length());
+            for (int i = 0; i < tagsList.length(); i++) {
+
+                try {
+                    JSONObject currentTag = tagsList.getJSONObject(i);
+                    String author = currentTag.getString("webTitle");
+                    authorName.add(author);
+                } catch (JSONException e) {
+                    System.out.println("catch jsonException" + e);
+                }
+            }
+        }
+        return authorName;
     }
 }

@@ -1,7 +1,10 @@
 package com.example.android.newsapp;
 
+import java.util.ArrayList;
+
 public class News {
     private String mTitle;
+    private ArrayList<String> mAuthor;
     private String mCategory;
     private String mDatePublished;
     private String mURL;
@@ -9,8 +12,9 @@ public class News {
     /**
      * Create a new News object
      */
-    public News(String title, String category, String datePublished, String url) {
+    public News(String title, ArrayList<String> author, String category, String datePublished, String url) {
         mTitle = title;
+        mAuthor = author;
         mCategory = category;
         mDatePublished = datePublished;
         mURL = url;
@@ -21,6 +25,21 @@ public class News {
      */
     public String getTitle() {
         return mTitle;
+    }
+
+    /**
+     * Get the author of article.
+     */
+    public ArrayList<String> getAuthor() {
+        return mAuthor;
+    }
+
+    public String getAuthorString(){
+        String authorInOneLine = "";
+        for (int a=0; a < mAuthor.size(); a++){
+            authorInOneLine = authorInOneLine + mAuthor.get(a) + '\n';
+        }
+        return authorInOneLine;
     }
 
     /**

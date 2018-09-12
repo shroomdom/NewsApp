@@ -3,5 +3,7 @@
     <string name="title">Title</string>
     <string name="category_name">Category Name</string>
     <string name="date_published">Date Published</string>
-    <string name="error_finding_news">Error Finding News</string>
+    <string name="error_finding_news">Error finding news! Make sure your internet connection
+    is stable!</string>
+    <string name="author">Author</string>
 </resources>
